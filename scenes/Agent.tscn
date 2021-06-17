@@ -1,0 +1,64 @@
+[gd_scene load_steps=8 format=2]
+
+[ext_resource path="res://scenes/Agent.gd" type="Script" id=1]
+
+[sub_resource type="PhysicsMaterial" id=1]
+friction = 0.0
+bounce = 1.0
+
+[sub_resource type="SpatialMaterial" id=2]
+
+[sub_resource type="CapsuleMesh" id=3]
+material = SubResource( 2 )
+radius = 0.5
+
+[sub_resource type="SphereMesh" id=4]
+radius = 0.5
+height = 1.0
+
+[sub_resource type="CylinderShape" id=5]
+radius = 0.5
+
+[sub_resource type="CylinderShape" id=6]
+
+[node name="Agent" type="Spatial"]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0 )
+
+[node name="RAgent" type="RigidBody" parent="."]
+physics_material_override = SubResource( 1 )
+continuous_cd = true
+contacts_reported = 20
+contact_monitor = true
+sleeping = true
+axis_lock_linear_y = true
+axis_lock_angular_y = true
+linear_damp = 0.0
+angular_damp = 1.0
+script = ExtResource( 1 )
+
+[node name="Body" type="MeshInstance" parent="RAgent"]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 0, 0 )
+mesh = SubResource( 3 )
+material/0 = null
+
+[node name="Head" type="MeshInstance" parent="RAgent"]
+transform = Transform( 1, 0, 0, 0, -1.62921e-07, -1, 0, 1, -1.62921e-07, 0, 1.33152, 5.68434e-13 )
+mesh = SubResource( 4 )
+material/0 = null
+
+[node name="CollisionShape" type="CollisionShape" parent="RAgent"]
+shape = SubResource( 5 )
+
+[node name="CollisionShape2" type="CollisionShape" parent="RAgent"]
+visible = false
+shape = SubResource( 6 )
+disabled = true
+
+[node name="DeathTimer" type="Timer" parent="RAgent"]
+
+[node name="CureTimer" type="Timer" parent="RAgent"]
+wait_time = 14.0
+one_shot = true
+[connection signal="body_entered" from="RAgent" to="RAgent" method="_on_RigidBody_body_entered"]
+[connection signal="timeout" from="RAgent/DeathTimer" to="RAgent" method="_on_DeathTimer_timeout"]
+[connection signal="timeout" from="RAgent/CureTimer" to="RAgent" method="_on_CureTimer_timeout"]
